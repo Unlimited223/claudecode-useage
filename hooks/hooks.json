@@ -1,0 +1,16 @@
+{
+  "description": "Update usage stats cache after each Claude response for real-time statusline display.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/usage-stats.mjs\" --update-cache",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}
