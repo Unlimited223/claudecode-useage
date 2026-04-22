@@ -60,7 +60,7 @@ function fmtCost(n) {
 }
 
 async function parseSessionFile(filePath, cutoffMs) {
-  const records = [];
+  const byMsgId = new Map();
   const stream = fs.createReadStream(filePath, { encoding: "utf8" });
   const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
 
@@ -74,7 +74,8 @@ async function parseSessionFile(filePath, cutoffMs) {
       if (msg.model.startsWith("<")) continue;
       const ts = new Date(obj.timestamp).getTime();
       if (ts < cutoffMs) continue;
-      records.push({
+      const key = msg.id || obj.uuid;
+      byMsgId.set(key, {
         model: msg.model,
         timestamp: ts,
         input: msg.usage.input_tokens || 0,
@@ -84,7 +85,7 @@ async function parseSessionFile(filePath, cutoffMs) {
       });
     } catch {}
   }
-  return records;
+  return [...byMsgId.values()];
 }
 
 async function collectAllRecords() {
